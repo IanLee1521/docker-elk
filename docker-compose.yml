@@ -1,7 +1,6 @@
-version: '3.7'
+version: "3.7"
 
 services:
-
   # The 'setup' service runs a one-off script which initializes users inside
   # Elasticsearch — such as 'logstash_internal' and 'kibana_system' — with the
   # values of the passwords defined in the '.env' file. It also creates the
@@ -100,6 +99,27 @@ services:
       - 5601:5601
     environment:
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+
+  enterprisesearch:
+    build:
+      context: elasticsearch/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    # volumes:
+    #   - ./enterprisesearch/config/:/usr/share/enterprise-search/es-config:ro,Z
+    ports:
+      - 3002:3002
+    environment:
+      allow_es_settings_modification: "true"
+      elasticsearch.host: http://elasticsearch:9200
+      # elasticsearch.username: "{{ elastic_admin_user }}"
+      elasticsearch.password: ${ELASTIC_PASSWORD:-}
+      kibana.external_url: http://kibana:5601
     networks:
       - elk
     depends_on:
