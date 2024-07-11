@@ -107,7 +107,7 @@ services:
 
   enterprisesearch:
     build:
-      context: elasticsearch/
+      context: enterprisesearch/
       args:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
     # volumes:
@@ -120,6 +120,7 @@ services:
       # elasticsearch.username: "{{ elastic_admin_user }}"
       elasticsearch.password: ${ELASTIC_PASSWORD:-}
       kibana.external_url: http://kibana:5601
+      secret_management.encryption_keys: "[b782901e67fe93b8a018dc2b4061eeaf2adb608b6bcc8cd59d55ad59bca2114a]"
     networks:
       - elk
     depends_on:
